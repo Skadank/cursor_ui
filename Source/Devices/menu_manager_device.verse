@@ -20,11 +20,7 @@ menu_manager_device := class(creative_device):
     @editable
     DemoButtons : []button_device = array{}
 
-    RayLength : float = 5000.0
-
     RemoveUIEvent : event(player) = event(player){}
-
-    var PlaneLocation : vector3 = vector3{}
     # ----------------------------------------------------------
 
 
@@ -81,6 +77,9 @@ menu_manager_device := class(creative_device):
     TargetEvent : event(vector3) = event(vector3){}
     # ----------------------------------------------------------
 
+    # Fields from @JaireWho's spatial math code,
+    # Forgot to make these per player when porting his stuff over
+    # TODO: Make these per player
     var LastCameraRotation : rotation = rotation{}
     var CursorX : float = 0.0
     var CursorY : float = 0.0
