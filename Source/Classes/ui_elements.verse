@@ -351,6 +351,7 @@ texture_element := class(ui_element):
 cursor := class(ui_element):
    
     CursorTexture : texture = Textures.CursorIcon
+    CursorHoverTexture : texture = Textures.CursorHoverIcon
     var CursorTextureBlock : texture_block = texture_block{DefaultImage :=Textures.CursorIcon}
 
     block:
@@ -370,10 +371,10 @@ cursor := class(ui_element):
         Distance(CursorPosition, Position) <= Size.X / 2.0  
 
     OnHoverEnter<override>():void=
-        CursorTextureBlock.SetImage(Textures.CursorHoverIcon)
+        CursorTextureBlock.SetImage(CursorHoverTexture)
 
     OnHoverExit<override>():void=
-        CursorTextureBlock.SetImage(Textures.CursorIcon)
+        CursorTextureBlock.SetImage(CursorTexture)
 
     GetHoverAnimationState<override>():float=0.0
 

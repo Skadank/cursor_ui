@@ -20,7 +20,11 @@ menu_manager_device := class(creative_device):
     @editable
     DemoButtons : []button_device = array{}
 
+    RayLength : float = 5000.0
+
     RemoveUIEvent : event(player) = event(player){}
+
+    var PlaneLocation : vector3 = vector3{}
     # ----------------------------------------------------------
 
 
@@ -77,9 +81,6 @@ menu_manager_device := class(creative_device):
     TargetEvent : event(vector3) = event(vector3){}
     # ----------------------------------------------------------
 
-    # Fields from @JaireWho's spatial math code,
-    # Forgot to make these per player when porting his stuff over
-    # TODO: Make these per player
     var LastCameraRotation : rotation = rotation{}
     var CursorX : float = 0.0
     var CursorY : float = 0.0
@@ -121,6 +122,7 @@ menu_manager_device := class(creative_device):
                 world_merge_menu{RemoveUIEvent:=RemoveUIEvent,MergeSound:=MergeSound,PropAssets := PropAssets, LeftClickInput:=LeftClickInput}
             }
             5 => merge_menu{RemoveUIEvent:=RemoveUIEvent,MergeSound:=MergeSound,LeftClickInput:=LeftClickInput}
+            6 => squid_game_cookie_menu{LeftClickInput:=LeftClickInput,RemoveUIEvent:=RemoveUIEvent}
             _ => target_game_menu{RemoveUIEvent:=RemoveUIEvent,Timer:=TargetTimer,HitSound:=HitAudio,GameOverSound:=GameOverAudio,LeftClickInput:=LeftClickInput, Player :=Player}
 
         CursorMenu.Init(Player)
@@ -128,20 +130,25 @@ menu_manager_device := class(creative_device):
             FC := Player.GetFortCharacter[]
         then:
             CursorMenu.AddToPlayer(Player, false)
-            Pos := FC.GetTransform().Translation
-            if:
-                FC.TeleportTo[Pos, IdentityRotation()]
-            then:
-                FC.PutInStasis(stasis_args{AllowTurning:=true})
-
-            Sleep(0.1)
-            set PlaneLocation = FC.GetTransform().Translation + (FC.GetViewRotation().GetLocalForward() * 1500.0)
+            FC.PutInStasis(stasis_args{AllowTurning:=true})
             loop:
                 NewPos := GetCursorPosition(FC)
                 CursorMenu.MoveCursor(NewPos)
                 Sleep(0.0)
 
-    # Code by @JaireWho, very clever guy, he does some pretty cool stuff, check out his work https://x.com/JaireWho
+    HandleCursorMenu(Player : player, CursorMenu : cursor_menu)<suspends>:void=
+        CursorMenu.Init(Player)
+        if:
+            FC := Player.GetFortCharacter[]
+        then:
+            CursorMenu.AddToPlayer(Player, false)
+            FC.PutInStasis(stasis_args{AllowTurning:=true})
+            loop:
+                NewPos := GetCursorPosition(FC)
+                CursorMenu.MoveCursor(NewPos)
+                Sleep(0.0)
+
+    # Code by @JaireWho, clever guy, he does some pretty cool stuff, check out his work https://x.com/JaireWho
     GetCursorPosition(FC : fort_character): vector2 =
         CurrentRotation:= FC.GetViewRotation()
         YawDelta:= GetYawDelta(CurrentRotation, LastCameraRotation)
